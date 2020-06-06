@@ -13,8 +13,8 @@ public class BitcoinHash {
         blockchain.add(new Block("Segundo bloco", blockchain.get(blockchain.size() - 1).hash));
         blockchain.add(new Block("Terceiro bloco :D", blockchain.get(blockchain.size() - 1).hash));
 
-        
-		System.out.println(blockchain);
+        System.out.println(blockchain);
+        System.out.println();
     }
 
 

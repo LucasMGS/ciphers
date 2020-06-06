@@ -17,7 +17,7 @@ public class TripleDES {
     private static final byte[] MY_KEY = "5oquil2oo2vb63e8ionujny6".getBytes();//24-byte
     private static final byte[] MY_IV = "3oco1v52".getBytes();//8-byte
 
-    
+
     private static String encrypt(String text) {
 
         if (text == null) {
@@ -128,7 +128,7 @@ public class TripleDES {
         
         System.out.println("Mensagem original: " + text);
         System.out.println("Mensagem encriptada: " + encryptedText);
-        System.out.println("Mensagem decriptada:" + decryptedText);
+        System.out.println("Mensagem decriptada: " + decryptedText);
         System.out.println();
       
     }

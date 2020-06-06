@@ -20,11 +20,11 @@ public class SHA256 {
             hexString.append(hex);
         }
         return hexString.toString();
-        
     }
 
     public static void Run(String originalString) throws NoSuchAlgorithmException {
         String hash = CreateHash(originalString);
         System.out.println("A hash SHA-256 do texto \""+ originalString + "\" é " + hash);
+        System.out.println();
     }
 }

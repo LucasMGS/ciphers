@@ -10,7 +10,6 @@ public class Block {
     private String data; 
     private long timeStamp; 
 
-    // Block Constructor.
     public Block(String data,String previousHash ) throws NoSuchAlgorithmException {
 		this.data = data;
 		this.previousHash = previousHash;

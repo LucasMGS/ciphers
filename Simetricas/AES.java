@@ -72,5 +72,6 @@ public class AES {
         System.out.println("Mensagem original: " + text) ;
         System.out.println("Mensagem encriptada: "  + encryptedString);
         System.out.println("Mensagem descriptografada: " + decryptedString);
+        System.out.println();
     }
 }

@@ -5,8 +5,7 @@ import java.security.MessageDigest;
 public class SHA1 {
     public static void Run(String Message){
 		String sha1 = "";
-		
-		// With the java libraries
+
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
 	        digest.reset();

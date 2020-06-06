@@ -39,8 +39,9 @@ public class BlowFish {
     public static void Run(String text){
         String palavraCriptografada = encrypt(text);
         String palavraDescriptografada = decrypt(palavraCriptografada);
-        System.out.println("Mensagem: " + text);
+        System.out.println("Mensagem original: " + text);
         System.out.println("Mensagem encriptada: " + palavraCriptografada);
         System.out.println("Mensagem descriptografada: " + palavraDescriptografada);
+        System.out.println();
     }
 }

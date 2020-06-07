@@ -17,11 +17,11 @@ public class Block {
 		this.hash = calculateHash();
 	}
 
-    public String createSHA256Hash(String text) throws NoSuchAlgorithmException {
+    private String createSHA256Hash(String text) throws NoSuchAlgorithmException {
         return SHA256.CreateHash(text);
     }
 
-    public String calculateHash() throws NoSuchAlgorithmException {
+    private String calculateHash() throws NoSuchAlgorithmException {
         String calculatedhash = createSHA256Hash(
                 previousHash +
                 Long.toString(timeStamp) +

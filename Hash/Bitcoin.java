@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 
-public class BitcoinHash {
+public class Bitcoin {
     public static ArrayList<Block> blockchain = new ArrayList<Block>();
 
     public static void Run() throws NoSuchAlgorithmException {
@@ -16,8 +16,4 @@ public class BitcoinHash {
         System.out.println(blockchain);
         System.out.println();
     }
-
-
-   
-
 }

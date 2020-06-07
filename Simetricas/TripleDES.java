@@ -1,135 +1,69 @@
 package Simetricas;
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.*;
+import java.security.*;
 
-/**
- * Encrypt/Decrypt text2text by using Triple-DES
- * 
- * @author Tom Misawa (riversun.org@gmail.com)
- */
+import java.io.*;
+
 public class TripleDES {
+    private static final String ALGORITHM = "DESede";
 
-    private static final String CRYPT_ALGORITHM = "DESede";
-    private static final String PADDING = "DESede/CBC/NoPadding";
-    private static final String CHAR_ENCODING = "UTF-8";
-
-    private static final byte[] MY_KEY = "5oquil2oo2vb63e8ionujny6".getBytes();//24-byte
-    private static final byte[] MY_IV = "3oco1v52".getBytes();//8-byte
-
-
-    private static String encrypt(String text) {
-
-        if (text == null) {
-            return null;
-        }
-
-        String retVal = null;
-
+    public static void Run() {
         try {
+            final String _currentDir = System.getProperty("user.dir");
+            final File inputFile = new File(_currentDir + "/arquivos/simetricas/3DES/inputFile.txt");
+            final File encryptedFile = new File(_currentDir + "/arquivos/simetricas/3DES/Encrypted.txt");
+            final File decryptedFile = new File(_currentDir + "/arquivos/simetricas/3DES/Decrypted.txt");
 
-            final SecretKeySpec secretKeySpec = new SecretKeySpec(MY_KEY, CRYPT_ALGORITHM);
+            final SecretKey key = generateKey();
+ 
+            encrypt(key, inputFile, encryptedFile);
+            decrypt(key, encryptedFile, decryptedFile);
 
-            final IvParameterSpec iv = new IvParameterSpec(MY_IV);
-
-            final Cipher cipher = Cipher.getInstance(PADDING);
-
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
-
-            final byte[] encrypted = cipher.doFinal(text.getBytes(CHAR_ENCODING));
-
-            retVal = new String(encodeHex(encrypted));
-
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
+            System.err.println(e);
         }
-
-        return retVal;
     }
 
-    private static String decrypt(String text) {
+    private static SecretKey generateKey() throws NoSuchAlgorithmException {
 
-        if (text == null) {
-            return null;
-        }
-
-        String retVal = null;
-
-        try {
-
-            final SecretKeySpec secretKeySpec = new SecretKeySpec(MY_KEY, CRYPT_ALGORITHM);
-            final IvParameterSpec iv = new IvParameterSpec(MY_IV);
-
-            final Cipher cipher = Cipher.getInstance(PADDING);
-
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
-
-            final byte[] decrypted = cipher.doFinal(decodeHex(text.toCharArray()));
-
-            retVal = new String(decrypted, CHAR_ENCODING);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return retVal;
+        final KeyGenerator keygen = KeyGenerator.getInstance(ALGORITHM);
+        return keygen.generateKey();
     }
 
-    private static byte[] decodeHex(char[] data) throws Exception {
-
-        int len = data.length;
-
-        if ((len & 0x01) != 0) {
-            throw new Exception("Odd number of characters.");
-        }
-
-        byte[] out = new byte[len >> 1];
-
-        // two characters form the hex value.
-        for (int i = 0, j = 0; j < len; i++) {
-
-            int f = toDigit(data[j], j) << 4;
-            j++;
-            f = f | toDigit(data[j], j);
-            j++;
-            out[i] = (byte) (f & 0xFF);
-        }
-
-        return out;
+    private static void encrypt(final SecretKey key, final File inputFile, final File outputFile)
+            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IOException,
+            IllegalBlockSizeException, BadPaddingException {
+        EncryptOrDecrypt(Cipher.ENCRYPT_MODE, key, inputFile, outputFile);
     }
 
-    private static int toDigit(char ch, int index) throws Exception {
-        int digit = Character.digit(ch, 16);
-        if (digit == -1) {
-            throw new Exception("Illegal hexadecimal character " + ch + " at index " + index);
-        }
-        return digit;
-    }
-     
-    private static char[] encodeHex(byte[] data) {
+    private static void decrypt(final SecretKey key, final File inputFile, final File outputFile)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException,
+            IllegalBlockSizeException, BadPaddingException
 
-        final char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-
-        int l = data.length;
-        char[] out = new char[l << 1];
-        // two characters form the hex value.
-        for (int i = 0, j = 0; i < l; i++) {
-            out[j++] = DIGITS[(0xF0 & data[i]) >>> 4];
-            out[j++] = DIGITS[0x0F & data[i]];
-        }
-        return out;
+    {
+        EncryptOrDecrypt(Cipher.DECRYPT_MODE, key, inputFile, outputFile);
     }
 
-    public static void Run(String text) {
+    public static void EncryptOrDecrypt(final int cipherMode, final SecretKey key, final File inputFile,
+            final File outputFile) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+            IOException, IllegalBlockSizeException, BadPaddingException {
 
-        String encryptedText = encrypt(text);
-        String decryptedText = decrypt(encryptedText);
+        final Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(cipherMode, key);
+
+        final FileInputStream inputStream = new FileInputStream(inputFile);
+        final byte[] inputBytes = new byte[(int) inputFile.length()];
+        inputStream.read(inputBytes);
+
+        final byte[] outputBytes = cipher.doFinal(inputBytes);
+
+        final FileOutputStream outputStream = new FileOutputStream(outputFile);
+        outputStream.write(outputBytes);
         
-        System.out.println("Mensagem original: " + text);
-        System.out.println("Mensagem encriptada: " + encryptedText);
-        System.out.println("Mensagem decriptada: " + decryptedText);
-        System.out.println();
-      
+        inputStream.close();
+        outputStream.close();
+       
+
     }
 }

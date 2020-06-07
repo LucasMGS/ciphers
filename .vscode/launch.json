@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - RSA",
+            "request": "launch",
+            "mainClass": "Assimetricas.RSA",
+            "projectName": "trabalho segurança_c206167a"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - RSAUtil",
+            "request": "launch",
+            "mainClass": "Assimetricas.RSAUtil",
+            "projectName": "trabalho segurança_c206167a"
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
             "mainClass": "${file}"

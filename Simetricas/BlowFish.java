@@ -1,47 +1,64 @@
 package Simetricas;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
+
+ 
 
 public class BlowFish {
-    private static final String key = "123";
-
-    private static String encrypt(String password) 
-    {
-        try {
-            byte[] keyData = (key).getBytes();
-            SecretKeySpec secretKeySpec = new SecretKeySpec(keyData,"Blowfish");
-            Cipher cipher = Cipher.getInstance("Blowfish");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-            byte[] hasil = cipher.doFinal(password.getBytes());
-            return new String(Base64.getEncoder().encode(hasil));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        
-    }
-    private static String decrypt(String msgCriptografada) {
-        try {
-            byte[] keyData = (key).getBytes();
-            SecretKeySpec secretKeySpec = new SecretKeySpec(keyData,"Blowfish");
-            Cipher cipher = Cipher.getInstance("Blowfish");
-            cipher.init(Cipher.DECRYPT_MODE,secretKeySpec);
-            byte[] hasil = cipher.doFinal(java.util.Base64.getDecoder().decode(msgCriptografada));
-            return new String(hasil);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    private static final String ALGORITHM = "Blowfish";
+ 
+    private static void encrypt(final String key, final File inputFile, final File outputFile) {
+        doCrypto(Cipher.ENCRYPT_MODE, key, inputFile, outputFile);
     }
 
-    public static void Run(String text){
-        String palavraCriptografada = encrypt(text);
-        String palavraDescriptografada = decrypt(palavraCriptografada);
-        System.out.println("Mensagem original: " + text);
-        System.out.println("Mensagem encriptada: " + palavraCriptografada);
-        System.out.println("Mensagem descriptografada: " + palavraDescriptografada);
-        System.out.println();
+    private static void decrypt(final String key, final File inputFile, final File outputFile) {
+        doCrypto(Cipher.DECRYPT_MODE, key, inputFile, outputFile);
+    }
+
+    private static void doCrypto(final int cipherMode, final String key, final File inputFile, final File outputFile)
+     {
+        try {
+            final Key secretKey = new SecretKeySpec(key.getBytes(),ALGORITHM);
+            final Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(cipherMode, secretKey);
+
+            final FileInputStream inputStream = new FileInputStream(inputFile);
+            byte[] inputBytes = new byte[(int) inputFile.length()];
+            inputStream.read(inputBytes);
+
+            byte[] outputBytes = cipher.doFinal(inputBytes);
+
+            final FileOutputStream outputStream = new FileOutputStream(outputFile);
+            outputStream.write(outputBytes);
+             
+            inputStream.close();
+            outputStream.close();
+             
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException
+                | InvalidKeyException | BadPaddingException
+                | IllegalBlockSizeException | IOException ex) {
+            ex.printStackTrace();
+            System.out.println("Erro: " + ex.toString());
+        }
+    }
+    public static void Run(){
+        String _currentDir = System.getProperty("user.dir");
+        String key = "blowfishkey123456";
+        File inputFile = new File(_currentDir + "/arquivos/simetricas/Blowfish/inputFile.txt");
+        File encryptedFile = new File(_currentDir + "/arquivos/simetricas/Blowfish/Encrypted.txt");
+        File decryptedFile = new File(_currentDir + "/arquivos/simetricas/Blowfish/Decrypted.txt");
+        encrypt(key, inputFile, encryptedFile);
+        decrypt(key, encryptedFile, decryptedFile);
     }
 }
